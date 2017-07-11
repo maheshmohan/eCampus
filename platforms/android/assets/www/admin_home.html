@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta name="viewport" content="user-scalable=yes, width=device-width, initial-scale=1.0" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>eCampus:Admin Panel</title>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/firebase.js"></script>
+    <script type="text/javascript" src="js/admin_home.js"></script>
+    
+    <style type="text/css">
+      body, html {
+          height: 100%;
+          margin: 0;
+          overflow:hidden;
+          font-family: helvetica;
+          font-weight: 100;
+      }
+      .container {
+          position: relative;
+          height: 100%;
+          width: 100%;
+          left: 0;
+          -webkit-transition:  left 0.4s ease-in-out;
+          -moz-transition:  left 0.4s ease-in-out;
+          -ms-transition:  left 0.4s ease-in-out;
+          -o-transition:  left 0.4s ease-in-out;
+          transition:  left 0.4s ease-in-out;
+      }
+      .container.open-sidebar {
+          left: 240px;
+      }
+      
+      .swipe-area {
+          position: absolute;
+          width: 50px;
+          left: 0;
+      top: 0;
+          height: 100%;
+          background: #f3f3f3;
+          z-index: 0;
+      }
+      #sidebar {
+          background: #DF314D;
+          position: absolute;
+          width: 240px;
+          height: 100%;
+          left: -240px;
+          box-sizing: border-box;
+          -moz-box-sizing: border-box;
+      }
+      #sidebar ul {
+          margin: 0;
+          padding: 0;
+          list-style: none;
+      }
+      #sidebar ul li {
+          margin: 0;
+      }
+      #sidebar ul li a {
+          padding: 15px 20px;
+          font-size: 16px;
+          font-weight: 100;
+          color: white;
+          text-decoration: none;
+          display: block;
+          border-bottom: 1px solid #C9223D;
+          -webkit-transition:  background 0.3s ease-in-out;
+          -moz-transition:  background 0.3s ease-in-out;
+          -ms-transition:  background 0.3s ease-in-out;
+          -o-transition:  background 0.3s ease-in-out;
+          transition:  background 0.3s ease-in-out;
+      }
+      #sidebar ul li:hover a {
+          background: #C9223D;
+      }
+      .main-content {
+          width: 100%;
+          height: 100%;
+          padding: 10px;
+          box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          position: relative;
+      }
+      .main-content .content{
+          box-sizing: border-box;
+          -moz-box-sizing: border-box;
+      padding-left: 60px;
+      width: 100%;
+      }
+      .main-content .content h1{
+          font-weight: 100;
+      }
+      .main-content .content p{
+          width: 100%;
+          line-height: 160%;
+      }
+      .main-content #sidebar-toggle {
+          background: #DF314D;
+          border-radius: 3px;
+          display: block;
+          position: relative;
+          padding: 10px 7px;
+          float: left;
+      }
+      .main-content #sidebar-toggle .bar{
+           display: block;
+          width: 18px;
+          margin-bottom: 3px;
+          height: 2px;
+          background-color: #fff;
+          border-radius: 1px;   
+      }
+      .main-content #sidebar-toggle .bar:last-child{
+           margin-bottom: 0;   
+      }
+    </style>
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<style>
+	* {
+	  margin: 0;
+	  padding: 0;
+	  -webkit-box-sizing: border-box;
+	  -moz-box-sizing: border-box;
+	  box-sizing: border-box;
+	}
+
+	body {
+	  background: #2d2c41;
+	  font-family: 'Open Sans', Arial, Helvetica, Sans-serif, Verdana, Tahoma;
+	}
+
+	ul { list-style-type: none; }
+
+	a {
+	  color: #b63b4d;
+	  text-decoration: none;
+	}
+
+	/** =======================
+	 * Contenedor Principal
+	 ===========================*/
+
+
+	h1,h2 {
+	  color: #FFF;
+	  font-size: 24px;
+	  font-weight: 400;
+	  text-align: center;
+	  margin-top: 20px;
+	}
+
+	h1 a {
+	  color: #c12c42;
+	  font-size: 16px;
+	}
+
+	.accordion {
+	  width: 100%;
+	  max-width: 360px;
+	  margin: 30px auto 20px;
+	  background: #FFF;
+	  -webkit-border-radius: 4px;
+	  -moz-border-radius: 4px;
+	  border-radius: 4px;
+	}
+
+	.accordion .link {
+	  cursor: pointer;
+	  display: block;
+	  padding: 15px 15px 15px 42px;
+	  color: #4D4D4D;
+	  font-size: 14px;
+	  font-weight: 700;
+	  border-bottom: 1px solid #CCC;
+	  position: relative;
+	  -webkit-transition: all 0.4s ease;
+	  -o-transition: all 0.4s ease;
+	  transition: all 0.4s ease;
+	}
+
+	.accordion li:last-child .link { border-bottom: 0; }
+
+	.accordion li i {
+	  position: absolute;
+	  top: 16px;
+	  left: 12px;
+	  font-size: 18px;
+	  color: #595959;
+	  -webkit-transition: all 0.4s ease;
+	  -o-transition: all 0.4s ease;
+	  transition: all 0.4s ease;
+	}
+
+	.accordion li i.fa-chevron-down {
+	  right: 12px;
+	  left: auto;
+	  font-size: 16px;
+	}
+
+	.accordion li.open .link { color: #b63b4d; }
+
+	.accordion li.open i { color: #b63b4d; }
+
+	.accordion li.open i.fa-chevron-down {
+	  -webkit-transform: rotate(180deg);
+	  -ms-transform: rotate(180deg);
+	  -o-transform: rotate(180deg);
+	  transform: rotate(180deg);
+	}
+
+	/**
+	 * Submenu
+	 -----------------------------*/
+
+
+	.submenu {
+	  display: none;
+	  background: #444359;
+	  font-size: 14px;
+	}
+
+	.submenu li { border-bottom: 1px solid #4b4a5e; }
+
+	.submenu a {
+	  display: block;
+	  text-decoration: none;
+	  color: #d9d9d9;
+	  padding: 12px;
+	  padding-left: 42px;
+	  -webkit-transition: all 0.25s ease;
+	  -o-transition: all 0.25s ease;
+	  transition: all 0.25s ease;
+	}
+
+	.submenu a:hover {
+	  background: #b63b4d;
+	  color: #FFF;
+	}
+	
+	/*overlay*/
+	.overlay{
+	  position: relative;
+	  top: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 100%;
+	  z-index: 10;
+	  background-color: rgba(0,0,0,0.5); /*dim the background*/
+	}
+	
+	.notif_btn {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+	
+	#del_stud_div{
+		text-align: center;
+		color: rgb(255,255,255); 
+		font-size: 17px;
+	}
+	
+	#del_fac_div{
+		text-align: center;
+		color: rgb(255,255,255); 
+		font-size: 17px;
+	}
+	
+	#del_cant_div{
+		text-align: center;
+		color: rgb(255,255,255); 
+		font-size: 17px;
+	}
+	
+	#del_hostel_div{
+		text-align: center;
+		color: rgb(255,255,255); 
+		font-size: 17px;
+	}
+	
+	</style>
+    <script type="text/javascript">
+      $(window).load(function(){
+        $("[data-toggle]").click(function() {
+          var toggle_el = $(this).data("toggle");
+          $(toggle_el).toggleClass("open-sidebar");
+        }); 
+      });
+      
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="sidebar">
+          <ul>
+              <li>Logged in as Admin</li>
+			  <li></li>
+			  <li><a href="#">Settings</a></li>
+              <li><a href="index.html" id="logout">Sign Out</a></li>
+          </ul>
+      </div>
+      <div class="main-content">
+          <div class="swipe-area"></div>
+          <a href="#" data-toggle=".container" id="sidebar-toggle">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+          </a>
+          <div class="content">
+				<h1>eCampus@Amrita</h1>
+				<h2>Admin Panel</h2>
+				<!-- Contenedor -->
+				<ul id="accordion" class="accordion">
+				  <li>
+					<div class="link"><i class="fa fa-database"></i>Student<i class="fa fa-chevron-down"></i></div>
+					<ul class="submenu">
+					  <li><a href="stud_add.html">Add Records</a></li>
+					  <li id="del_stud"><a href="#">Delete Record</a></li>
+					  <div id="del_stud_div" style="overflow:scroll">
+						<ul>
+						<li>
+					    <!--label for="choose roll_num" style="color:rgb(255,255,255);">Choose roll number to delete </label-->
+						<select id="stud_sel">
+							<option value="">Choose Roll Number</option>
+						</select></li>
+						<li><button class="notif_btn" id="stud_del">Delete</button></li>
+						</ul>
+					  </div>
+					</ul>
+				  </li>
+				  <li>
+					<div class="link"><i class="fa fa-database"></i>Faculty<i class="fa fa-chevron-down"></i></div>
+					<ul class="submenu">
+					  <li><a href="faculty_add.html">Add Record</a></li>
+					  <li id="del_fac"><a href="#">Delete Record</a></li>
+					  <div id="del_fac_div" style="overflow:scroll">
+						<ul>
+						<li>
+					    <!--label for="choose roll_num" style="color:rgb(255,255,255);">Choose roll number to delete </label-->
+						<select id="fac_sel">
+							<option value="">Choose ID</option>
+						</select></li>
+						<li><button class="notif_btn" id="fac_del">Delete</button></li>
+						</ul>
+					  </div>
+					</ul>
+				  </li>
+				  <li>
+					<div class="link"><i class="fa fa-database"></i>Hostel Staff<i class="fa fa-chevron-down"></i></div>
+					<ul class="submenu">
+					  <li><a href="hostel_add.html">Add Record</a></li>
+					  <li id="del_hostel"><a href="#">Delete Record</a></li>
+					  <div id="del_hostel_div" style="overflow:scroll">
+						<ul>
+						<li>
+					    <!--label for="choose roll_num" style="color:rgb(255,255,255);">Choose roll number to delete </label-->
+						<select id="hostel_sel">
+							<option value="">Choose ID</option>
+						</select></li>
+						<li><button class="notif_btn" id="hostel_del">Delete</button></li>
+						</ul>
+					  </div>
+					</ul>
+				  </li>
+				  <li>
+					<div class="link"><i class="fa fa-database"></i>Canteen Staff<i class="fa fa-chevron-down"></i></div>
+					<ul class="submenu">
+					  <li><a href="canteen_add.html">Add Record</a></li>
+					  <li id="del_cant"><a href="#">Delete Record</a></li>
+					  <div id="del_cant_div" style="overflow:scroll">
+						<ul>
+						<li>
+					    <!--label for="choose roll_num" style="color:rgb(255,255,255);">Choose roll number to delete </label-->
+						<select id="cant_sel">
+							<option value="">Choose ID</option>
+						</select></li>
+						<li><button class="notif_btn" id="cant_del">Delete</button></li>
+						</ul>
+					  </div>
+					</ul>
+				  </li>
+				</ul>
+				<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script> 
+				<script>
+				$(function() {
+					var Accordion = function(el, multiple) {
+						this.el = el || {};
+						this.multiple = multiple || false;
+
+						// Variables privadas
+						var links = this.el.find('.link');
+						// Evento
+						links.on('click', {el: this.el, multiple: this.multiple}, this.dropdown)
+					}
+
+					Accordion.prototype.dropdown = function(e) {
+						var $el = e.data.el;
+							$this = $(this),
+							$next = $this.next();
+
+						$next.slideToggle();
+						$this.parent().toggleClass('open');
+
+						if (!e.data.multiple) {
+							$el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+						};
+					}	
+
+					var accordion = new Accordion($('#accordion'), false);
+				});
+				</script>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
